@@ -3,6 +3,7 @@
 , buildPythonPackage
 , substituteAll
 , cudaSupport ? false
+, rocmSupport ? false
 
 # runtime
 , ffmpeg
@@ -52,11 +53,13 @@ buildPythonPackage rec {
     numba
     scipy
     tiktoken
-  ] ++ lib.optionals (!cudaSupport) [
+  ] ++ lib.optionals (!cudaSupport && !rocmSupport) [
     torch
   ] ++ lib.optionals (cudaSupport) [
     openai-triton
     torchWithCuda
+  ] ++ lib.optionals (rocmSupport) ]
+    torchWithRocm
   ];
 
   postPatch = ''
